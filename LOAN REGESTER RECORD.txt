@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <math.h>
+#define MAX 50
+
+int main()
+{
+    char name[MAX][30];
+    float principal[MAX], rate[MAX], emi[MAX];
+    int months[MAX];
+    int count = 0, choice, i, sno;
+    float r, p;
+    int n;
+
+    do
+    {
+        /* display menu */
+        printf("\n===== LOAN RECORDS REGISTER =====\n");
+        printf("1. Add loan\n");
+        printf("2. View all loans\n");
+        printf("3. Search loan by S.No.\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+            if (count == MAX)
+            {
+                printf("Array full. Cannot add more loans.\n");
+                break;
+            }
+            printf("Enter borrower name: ");
+            scanf(" %[^\n]", name[count]);
+            printf("Enter principal: ");
+            scanf("%f", &p);
+            printf("Enter annual rate (%%): ");
+            scanf("%f", &rate[count]);
+            printf("Enter months: ");
+            scanf("%d", &n);
+
+            if (p <= 0 || rate[count] < 0 || n <= 0)
+            {
+                printf("Invalid input. Loan not added.\n");
+                break;
+            }
+            principal[count] = p;
+            months[count] = n;
+
+            /* EMI calculation */
+            r = rate[count] / 12 / 100;
+            if (r == 0)
+                emi[count] = p / n;
+            else
+                emi[count] = p * r * pow(1 + r, n) / (pow(1 + r, n) - 1);
+
+            count++;
+            printf("Loan added. S.No. %d, EMI = %.2f\n", count, emi[count - 1]);
+            break;
+
+        case 2:
+            if (count == 0)
+            {
+                printf("No loans to display.\n");
+                break;
+            }
+            printf("\n%-6s%-20s%12s%8s%8s%12s\n",
+                   "S.No.", "Name", "Principal", "Rate", "Months", "EMI");
+            for (i = 0; i < count; i++)
+            {
+                printf("%-6d%-20s%12.2f%8.1f%8d%12.2f\n",
+                       i + 1, name[i], principal[i], rate[i], months[i], emi[i]);
+            }
+            break;
+
+        case 3:
+            printf("Enter S.No. to search: ");
+            scanf("%d", &sno);
+            if (sno < 1 || sno > count)
+            {
+                printf("Loan not found.\n");
+            }
+            else
+            {
+                i = sno - 1;
+                printf("\n%-6s%-20s%12s%8s%8s%12s\n",
+                       "S.No.", "Name", "Principal", "Rate", "Months", "EMI");
+                printf("%-6d%-20s%12.2f%8.1f%8d%12.2f\n",
+                       sno, name[i], principal[i], rate[i], months[i], emi[i]);
+            }
+            break;
+
+        case 4:
+            printf("Goodbye!\n");
+            break;
+
+        default:
+            printf("Invalid choice. Try again.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
